@@ -1,4 +1,3 @@
-;;; -*- lexical-binding: t -*-
 ;; Packages
 (require 'package)
 
@@ -28,22 +27,9 @@
 (show-paren-mode 1)
 
 ;; Files
-(defconst backup-dir
-  (expand-file-name "backups/" user-emacs-directory))
-
-(make-directory backup-dir t)
-
-(setq backup-directory-alist
-      `(("." . ,backup-dir))
-      auto-save-file-name-transforms
-      `(("." ,backup-dir t))
-      lock-file-name-transforms
-      `(("." ,backup-dir t))
-      make-backup-files t
-      version-control t
-      kept-new-versions 6
-      kept-old-versions 2
-      delete-old-versions t)
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+(setq create-lockfiles nil)
 
 (setq custom-file
       (expand-file-name "custom.el" user-emacs-directory))
@@ -65,17 +51,6 @@
 (add-hook 'before-save-hook
           #'delete-trailing-whitespace)
 
-;; Magit
-(use-package magit
-  :bind (("C-x g" . magit-status)
-         ("C-c g g" . magit-status)
-         ("C-c g l" . magit-log-current)
-         ("C-c g b" . magit-blame-addition))
-  :config
-  (setq magit-display-buffer-function
-        #'magit-display-buffer-same-window-except-diff-v1
-        magit-diff-refine-hunk 'all))
-
 ;; Python
 (defun setup-python-indentation ()
   (setq-local indent-tabs-mode nil
@@ -91,14 +66,3 @@
 ;; Nael
 (use-package nael
   :mode ("\\.lean\\'" . nael-mode))
-
-;; Terminal compatibility
-(unless (display-graphic-p)
-  (xterm-mouse-mode 1)
-  (global-set-key (kbd "C-p") #'previous-line)
-  (global-set-key (kbd "C-n") #'next-line))
-
-;; Emacs server
-(require 'server)
-(unless (server-running-p)
-  (server-start))
